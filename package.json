@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/matter-js": "^0.10.9",
     "matter-js": "^0.14.2",
     "react": "16.8.6",
     "react-native": "0.60.5",
