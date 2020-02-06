@@ -1,13 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import React, {Fragment, useState, useRef} from 'react';
 import {
   SafeAreaView,
@@ -27,9 +17,11 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import Matter from 'matter-js';
-import {Constants} from './src/components/constants';
+import {Constants} from './src/constants';
 import {GameEngine} from 'react-native-game-engine';
-import {Pill} from './src/components/pill';
+import {Pill} from './src/components/Pill';
+import Physics from './src/components/Physics';
+import {Wall} from './src/components/Wall';
 
 const App = () => {
   const [running, setRunning] = useState(true);
@@ -45,12 +37,38 @@ const App = () => {
       50,
       50,
     );
+    let floor = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH / 2,
+      Constants.MAX_HEIGHT - 25,
+      Constants.MAX_WIDTH,
+      50,
+      {isStatic: true},
+    );
+    let ceiling = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH / 2,
+      25,
+      Constants.MAX_WIDTH,
+      50,
+      {isStatic: true},
+    );
 
-    Matter.World.add(world, [pill]);
+    Matter.World.add(world, [pill, floor, ceiling]);
 
     return {
       physics: {engine: engine, world: world},
       pill: {body: pill, size: [50, 50], color: 'pink', renderer: Pill},
+      floor: {
+        body: floor,
+        size: [Constants.MAX_WIDTH, 50],
+        color: 'green',
+        renderer: Wall,
+      },
+      ceiling: {
+        body: ceiling,
+        size: [Constants.MAX_WIDTH, 50],
+        color: 'green',
+        renderer: Wall,
+      },
     };
   };
 
@@ -62,6 +80,7 @@ const App = () => {
         ref={gameEngine}
         style={styles.gameContainer}
         running={running}
+        systems={[Physics]}
         entities={entities}>
         <StatusBar hidden={true} />
       </GameEngine>
