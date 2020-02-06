@@ -29,6 +29,7 @@ import {
 import Matter from 'matter-js';
 import {Constants} from './src/components/constants';
 import {GameEngine} from 'react-native-game-engine';
+import {Pill} from './src/components/pill';
 
 const App = () => {
   const [running, setRunning] = useState(true);
@@ -49,7 +50,7 @@ const App = () => {
 
     return {
       physics: {engine: engine, world: world},
-      pill: {body: pill, size: [50, 50], color: 'red', renderer: Pill},
+      pill: {body: pill, size: [50, 50], color: 'pink', renderer: Pill},
     };
   };
 
