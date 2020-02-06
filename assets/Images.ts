@@ -4,6 +4,6 @@ export const Images = {
   //   pipeCore: require('./img/pipe_core.png'),
   //   pipeTop: require('./img/pipe_top.png'),
   pill1: require('./img/pill1.png'),
-  //   pill2: require('./img/pill2.png'),
-  //   pill3: require('./img/pill3.png'),
+  pill2: require('./img/pill2.png'),
+  pill3: require('./img/pill3.png'),
 };

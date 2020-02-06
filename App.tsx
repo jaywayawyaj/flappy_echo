@@ -9,14 +9,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
 import Matter from 'matter-js';
 import {Constants} from './src/constants';
 import {GameEngine} from 'react-native-game-engine';
@@ -45,6 +37,7 @@ export const generatePipes = () => {
 
 const App = () => {
   const [running, setRunning] = useState(true);
+  const [score, setScore] = useState(0);
   let gameEngine = useRef<any | null>(null);
 
   const setupWorld = () => {
@@ -172,6 +165,7 @@ const App = () => {
         entities={entities}
         onEvent={onEvent}>
         <StatusBar hidden={true} />
+        <Text style={styles.score}>{score}</Text>
         {!running && (
           <TouchableOpacity style={styles.fullScreenButton} onPress={reset}>
             <View style={styles.fullScreen}>
@@ -218,6 +212,16 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flex: 1,
+  },
+  score: {
+    color: 'white',
+    fontSize: 72,
+    position: 'absolute',
+    top: 50,
+    left: Constants.MAX_WIDTH / 2 - 24,
+    textShadowColor: '#222222',
+    textShadowOffset: {width: 2, height: 2},
+    textShadowRadius: 2,
   },
 });
 
