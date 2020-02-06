@@ -1,12 +1,11 @@
-import React, {Fragment, useState, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
   StatusBar,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 
 import Matter from 'matter-js';
@@ -16,6 +15,7 @@ import {Pill} from './src/components/Pill';
 import Physics from './src/components/Physics';
 import {Wall} from './src/components/Wall';
 import {Floor} from './src/components/Floor';
+import {Images} from './assets/Images';
 
 export const randomBetween = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -45,40 +45,6 @@ const App = () => {
     let world = engine.world;
     world.gravity.y = 0.0;
 
-    let [pipe1Height, pipe2Height] = generatePipes();
-
-    let pipe1 = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH - Constants.PIPE_WIDTH / 2,
-      pipe1Height / 2,
-      Constants.PIPE_WIDTH,
-      pipe1Height,
-      {isStatic: true},
-    );
-    let pipe2 = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH - Constants.PIPE_WIDTH / 2,
-      Constants.MAX_HEIGHT - pipe2Height / 2,
-      Constants.PIPE_WIDTH,
-      pipe2Height,
-      {isStatic: true},
-    );
-
-    let [pipe3Height, pipe4Height] = generatePipes();
-
-    let pipe3 = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH * 2 - Constants.PIPE_WIDTH / 2,
-      pipe3Height / 2,
-      Constants.PIPE_WIDTH,
-      pipe3Height,
-      {isStatic: true},
-    );
-    let pipe4 = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH * 2 - Constants.PIPE_WIDTH / 2,
-      Constants.MAX_HEIGHT - pipe4Height / 2,
-      Constants.PIPE_WIDTH,
-      pipe4Height,
-      {isStatic: true},
-    );
-
     let pill = Matter.Bodies.rectangle(
       Constants.MAX_WIDTH / 2,
       Constants.MAX_HEIGHT / 2,
@@ -102,10 +68,9 @@ const App = () => {
       {isStatic: true},
     );
 
-    Matter.World.add(world, [pill, floor1, pipe1, pipe2, pipe3, pipe4]);
+    Matter.World.add(world, [pill, floor1]);
 
     Matter.Events.on(engine, 'collisionStart', event => {
-      // let pairs = event.pairs;
       gameEngine.current.dispatch({type: 'game-over'});
     });
 
@@ -114,30 +79,6 @@ const App = () => {
       pill: {body: pill, pose: 1, renderer: Pill},
       floor1: {body: floor1, renderer: Floor},
       floor2: {body: floor2, renderer: Floor},
-      pipe1: {
-        body: pipe1,
-        size: [Constants.PIPE_WIDTH, pipe1Height],
-        color: 'green',
-        renderer: Wall,
-      },
-      pipe2: {
-        body: pipe2,
-        size: [Constants.PIPE_WIDTH, pipe2Height],
-        color: 'green',
-        renderer: Wall,
-      },
-      pipe3: {
-        body: pipe3,
-        size: [Constants.PIPE_WIDTH, pipe3Height],
-        color: 'green',
-        renderer: Wall,
-      },
-      pipe4: {
-        body: pipe4,
-        size: [Constants.PIPE_WIDTH, pipe4Height],
-        color: 'green',
-        renderer: Wall,
-      },
     };
   };
 
@@ -145,18 +86,25 @@ const App = () => {
 
   const onEvent = e => {
     if (e.type === 'game-over') {
-      //Alert.alert("Game Over");
       setRunning(false);
+    } else if (e.type === 'score') {
+      setScore(score + 1);
     }
   };
 
   const reset = () => {
     gameEngine.current.swap(setupWorld());
     setRunning(true);
+    setScore(0);
   };
 
   return (
     <View style={styles.container}>
+      <Image
+        source={Images.background}
+        style={styles.backgroundImage}
+        resizeMode="stretch"
+      />
       <GameEngine
         ref={gameEngine}
         style={styles.gameContainer}
@@ -182,6 +130,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: Constants.MAX_WIDTH,
+    height: Constants.MAX_HEIGHT,
   },
   gameContainer: {
     position: 'absolute',
