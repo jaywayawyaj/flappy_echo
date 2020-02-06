@@ -5,4 +5,6 @@ export const Constants: {[key: string]: number} = {
   MAX_HEIGHT: Dimensions.get('screen').height,
   GAP_SIZE: 200,
   PIPE_WIDTH: 100,
+  PILL_WIDTH: 50,
+  PILL_HEIGHT: 57,
 };

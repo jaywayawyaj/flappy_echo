@@ -23,6 +23,7 @@ import {GameEngine} from 'react-native-game-engine';
 import {Pill} from './src/components/Pill';
 import Physics from './src/components/Physics';
 import {Wall} from './src/components/Wall';
+import {Floor} from './src/components/Floor';
 
 export const randomBetween = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -49,6 +50,7 @@ const App = () => {
   const setupWorld = () => {
     let engine = Matter.Engine.create({enableSleeping: false});
     let world = engine.world;
+    world.gravity.y = 0.0;
 
     let [pipe1Height, pipe2Height] = generatePipes();
 
@@ -85,49 +87,40 @@ const App = () => {
     );
 
     let pill = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH / 4,
+      Constants.MAX_WIDTH / 2,
       Constants.MAX_HEIGHT / 2,
-      50,
-      50,
+      Constants.PILL_WIDTH,
+      Constants.PILL_HEIGHT,
     );
-    let floor = Matter.Bodies.rectangle(
+
+    let floor1 = Matter.Bodies.rectangle(
       Constants.MAX_WIDTH / 2,
       Constants.MAX_HEIGHT - 25,
-      Constants.MAX_WIDTH,
-      50,
-      {isStatic: true},
-    );
-    let ceiling = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH / 2,
-      25,
-      Constants.MAX_WIDTH,
+      Constants.MAX_WIDTH + 4,
       50,
       {isStatic: true},
     );
 
-    Matter.World.add(world, [pill, floor, ceiling, pipe1, pipe2, pipe3, pipe4]);
+    let floor2 = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
+      Constants.MAX_HEIGHT - 25,
+      Constants.MAX_WIDTH + 4,
+      50,
+      {isStatic: true},
+    );
+
+    Matter.World.add(world, [pill, floor1, pipe1, pipe2, pipe3, pipe4]);
 
     Matter.Events.on(engine, 'collisionStart', event => {
-      let pairs = event.pairs;
-      console.log('&&&&', gameEngine);
+      // let pairs = event.pairs;
       gameEngine.current.dispatch({type: 'game-over'});
     });
 
     return {
       physics: {engine: engine, world: world},
-      pill: {body: pill, size: [50, 50], color: 'pink', renderer: Pill},
-      floor: {
-        body: floor,
-        size: [Constants.MAX_WIDTH, 50],
-        color: 'green',
-        renderer: Wall,
-      },
-      ceiling: {
-        body: ceiling,
-        size: [Constants.MAX_WIDTH, 50],
-        color: 'green',
-        renderer: Wall,
-      },
+      pill: {body: pill, pose: 1, renderer: Pill},
+      floor1: {body: floor1, renderer: Floor},
+      floor2: {body: floor2, renderer: Floor},
       pipe1: {
         body: pipe1,
         size: [Constants.PIPE_WIDTH, pipe1Height],
